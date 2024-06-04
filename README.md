@@ -1,2 +1,2 @@
-# azure-terraform-demo
-demo azure terraform repository; we'll see what happens
+# aws-terraform-demo
+demo  terraform repository; we'll see what happens
