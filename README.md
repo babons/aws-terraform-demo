@@ -1,2 +1,2 @@
 # aws-terraform-demo
-demo  terraform repository; we'll see what happens
+This is a repository where I am storing my Terraform configurations in different branches where I am working with a varity of resources and modules in AWS.
