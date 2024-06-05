@@ -1,2 +1,2 @@
 # aws-terraform-demo
-demo  terraform repository; we'll see what happens
+Hello! This branch holds Terraform configuration for an AWS VPC with subnets created and routing configured. An internet gateway is also configured in order to provide internet access to the subnets.
