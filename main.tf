@@ -142,11 +142,26 @@ resource "aws_launch_template" "ec2-web" {
   name          = "ec2-web"
   image_id      = "ami-04b70fa74e45c3917"
   instance_type = "t2.micro"
-  key_name      = "ec2-web-key"
+  key_name      = "ec2-web-01"
 
   network_interfaces {
     security_groups = [aws_security_group.ec2-allow-alb.id]
   }
 
   user_data = "PDwtRU9GCiAgICAgICAgICAgICAgIyEvYmluL2Jhc2gKICAgICAgICAgICAgICBhcHQgaW5zdGFsbCAteSBodHRwZAogICAgICAgICAgICAgIHN5c3RlbWN0bCBlbmFibGUgaHR0cGQKICAgICAgICAgICAgICBzeXN0ZW1jdGwgc3RhcnQgaHR0cGQKICAgICAgICAgICAgICBlY2hvICJIZWxsbywgV29ybGQiID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1sCiAgICAgICAgICAgICAgRU9G"
+}
+
+# --------- Autoscaling Groups ---------
+
+resource "aws_autoscaling_group" "app_deployment" {
+  name                = "app-deployment"
+  max_size            = 5
+  min_size            = 2
+  desired_capacity    = 4
+  vpc_zone_identifier = [aws_subnet.priv1.id, aws_subnet.priv2.id]
+  
+  launch_template {
+    id = aws_launch_template.ec2-web.id
+  } 
+
 }
