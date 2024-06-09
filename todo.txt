@@ -3,7 +3,7 @@
     - two pub subnets and two private (increment 3rd octet) in different availability zones
     - create internet gateway & attach
     - create route tables for pub & priv; internet route for pub
-2. security grroups
+2. security groups
     - security group for ALB to allow HTTP & HTTPS
     - Create security group for ec2 instances to allow traffic from ALB and outbound traffic
 3. launch temp/config (need help)
