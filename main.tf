@@ -165,6 +165,14 @@ resource "aws_autoscaling_group" "app_deployment" {
   } 
 }
 
+resource "aws_autoscaling_policy" "app_deployment_policy" {
+  name                   = "app-deployment-policy"
+  scaling_adjustment     = 4
+  adjustment_type        = "ChangeInCapacity"
+  cooldown               = 300
+  autoscaling_group_name = aws_autoscaling_group.app_deployment.name
+}
+
 # --------- ALB Configuration ---------
 
 resource "aws_lb" "app_alb" {
@@ -181,6 +189,13 @@ resource "aws_lb_target_group" "alb_pub_tg" {
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
   target_type = "instance"
+  health_check {
+    path                = "/"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+  }
 }
 
 resource "aws_lb_listener" "ab_pub_listener" {
@@ -191,5 +206,43 @@ resource "aws_lb_listener" "ab_pub_listener" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.alb_pub_tg.arn
+  }
+}
+
+# --------- CloudWatch Configuration ---------
+
+resource "aws_cloudwatch_metric_alarm" "app_cloudwatch_alarm_greater" {
+  alarm_name                = "app-cpu-util"
+  alarm_actions             = [aws_autoscaling_policy.app_deployment_policy.arn]
+  metric_name               = "CPUUtilization"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 2
+  namespace                 = "AWS/EC2"
+  period                    = 120
+  statistic                 = "Average"
+  threshold                 = 70
+  alarm_description         = "This merics describes EC2 CPU utilization."
+  insufficient_data_actions = []
+  
+  dimensions = {
+    autoscaling_group_name = aws_autoscaling_group.app_deployment.name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "app_cloudwatch_alarm_less" {
+  alarm_name                = "app-cpu-util"
+  alarm_actions             = [aws_autoscaling_policy.app_deployment_policy.arn]
+  metric_name               = "CPUUtilization"
+  comparison_operator       = "LessThanOrEqualToThreshold"
+  evaluation_periods        = 2
+  namespace                 = "AWS/EC2"
+  period                    = 120
+  statistic                 = "Average"
+  threshold                 = 30
+  alarm_description         = "This merics describes EC2 CPU utilization."
+  insufficient_data_actions = []
+  
+  dimensions = {
+    autoscaling_group_name = aws_autoscaling_group.app_deployment.name
   }
 }
