@@ -96,7 +96,7 @@ resource "aws_vpc_security_group_ingress_rule" "alb_allow_http" {
   to_port           = 80
 }
 
-resource "aws_vpc_security_group_ingress_rule" "alb_allow_http" {
+resource "aws_vpc_security_group_ingress_rule" "alb_allow_https" {
   security_group_id = aws_security_group.alb_allow_http.id
   cidr_ipv4         = aws_vpc.main.cidr_block
   from_port         = 443
@@ -107,7 +107,7 @@ resource "aws_vpc_security_group_ingress_rule" "alb_allow_http" {
 resource "aws_vpc_security_group_egress_rule" "alb_allow_http" {
   security_group_id = aws_security_group.alb_allow_http.id
   cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "tcp"
+  ip_protocol       = "-1"
 }
 
 # --------- EC2-ALB Security Group ---------
@@ -134,4 +134,19 @@ resource "aws_security_group" "ec2-allow-alb" {
   tags = {
     Name = "Allow EC2 to ALB"
   }
+}
+
+# --------- Launch Templates ---------
+
+resource "aws_launch_template" "ec2-web" {
+  name          = "ec2-web"
+  image_id      = "ami-04b70fa74e45c3917"
+  instance_type = "t2.micro"
+  key_name      = "ec2-web-key"
+
+  network_interfaces {
+    security_groups = [aws_security_group.ec2-allow-alb.id]
+  }
+
+  user_data = "PDwtRU9GCiAgICAgICAgICAgICAgIyEvYmluL2Jhc2gKICAgICAgICAgICAgICBhcHQgaW5zdGFsbCAteSBodHRwZAogICAgICAgICAgICAgIHN5c3RlbWN0bCBlbmFibGUgaHR0cGQKICAgICAgICAgICAgICBzeXN0ZW1jdGwgc3RhcnQgaHR0cGQKICAgICAgICAgICAgICBlY2hvICJIZWxsbywgV29ybGQiID4gL3Zhci93d3cvaHRtbC9pbmRleC5odG1sCiAgICAgICAgICAgICAgRU9G"
 }
