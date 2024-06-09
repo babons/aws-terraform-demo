@@ -19,7 +19,6 @@
     - create a target group for alb
         - target type = 'instance'
         - protocol    = HTTP
-
 6. scaling policies
     - CloudWatch Alarms for CPU utilization monitoring of instances
     - create saling policies to scale out when CPU utilization is above 70% and scale in when util is below 30%

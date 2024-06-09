@@ -1,2 +1,2 @@
 # aws-terraform-demo
-This is a repository where I am storing my Terraform configurations in different branches where I am working with a varity of resources and modules in AWS.
+This branch is dedicated to a project involving the created of a VPC, security groups, launch configs, autoscaling groups, an ALB, scaling policies, and IAM roles and policies.
