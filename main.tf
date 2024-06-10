@@ -239,7 +239,7 @@ resource "aws_cloudwatch_metric_alarm" "app_cloudwatch_alarm_less" {
   period                    = 120
   statistic                 = "Average"
   threshold                 = 30
-  alarm_description         = "This merics describes EC2 CPU utilization."
+  alarm_description         = "This metrics describes EC2 CPU utilization."
   insufficient_data_actions = []
   
   dimensions = {
